@@ -75,3 +75,7 @@ test.sh
 
 .docker/**
 !**/.gitkeep
+
+# local junk
+eslint/
+nodebb@4.4.6/

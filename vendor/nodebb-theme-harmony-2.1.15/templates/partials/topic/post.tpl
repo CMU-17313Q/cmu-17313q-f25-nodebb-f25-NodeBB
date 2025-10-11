@@ -56,6 +56,12 @@
 				<span class="badge bg-danger rounded-1">[[user:banned]]</span>
 				{{{ end }}}
 
+				{{{ if posts.official }}}
+				<span class="badge bg-primary rounded-1 official-post-badge" title="[[topic:official-post]]">
+					<i class="fa fa-certificate"></i> [[topic:official]]
+				</span>
+				{{{ end }}}
+
 				<div class="d-flex gap-1 align-items-center">
 					<span class="text-muted">{generateWrote(@value, config.timeagoCutoff)}</span>
 
@@ -111,6 +117,7 @@
 					<!-- IMPORT partials/topic/reactions.tpl -->
 					<a component="post/reply" href="#" class="btn btn-ghost btn-sm {{{ if !privileges.topics:reply }}}hidden{{{ end }}}" title="[[topic:reply]]"><i class="fa fa-fw fa-reply text-primary"></i></a>
 					<a component="post/quote" href="#" class="btn btn-ghost btn-sm {{{ if !privileges.topics:reply }}}hidden{{{ end }}}" title="[[topic:quote]]"><i class="fa fa-fw fa-quote-right text-primary"></i></a>
+					<button class="btn btn-ghost btn-sm tldr-button" type="button" title="Generate TLDR"><i class="fa fa-fw fa-compress text-primary"></i> <span class="tldr-text d-none d-md-inline">Show TLDR</span></button>
 
 					{{{ if ./announces }}}
 					<a component="post/announce-count" href="#" class="btn btn-ghost btn-sm d-flex gap-2 align-items-center" title="[[topic:announcers]]"><i class="fa fa-share-alt text-primary"></i> {./announces}</a>

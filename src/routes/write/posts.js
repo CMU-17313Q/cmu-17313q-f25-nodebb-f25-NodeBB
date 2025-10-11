@@ -18,6 +18,7 @@ module.exports = function () {
 	setupApiRoute(router, 'get', '/:pid/index', [middleware.assert.post], controllers.write.posts.getIndex);
 	setupApiRoute(router, 'get', '/:pid/raw', [middleware.assert.post], controllers.write.posts.getRaw);
 	setupApiRoute(router, 'get', '/:pid/summary', [middleware.assert.post], controllers.write.posts.getSummary);
+	setupApiRoute(router, 'post', '/:pid/tldr', [middleware.assert.post], controllers.write.posts.getTldr);
 
 	setupApiRoute(router, 'put', '/:pid/state', middlewares, controllers.write.posts.restore);
 	setupApiRoute(router, 'delete', '/:pid/state', middlewares, controllers.write.posts.delete);
@@ -47,8 +48,18 @@ module.exports = function () {
 	setupApiRoute(router, 'post', '/queue/:id/notify', [middleware.checkRequired.bind(null, ['message'])], controllers.write.posts.notifyQueuedPostOwner);
 
 
+
+	// Official flag (REST)
+	setupApiRoute(router, 'put', '/:pid/official', [...middlewares, middleware.checkRequired.bind(null, ['official'])], controllers.write.posts.setOfficial);
+	setupApiRoute(router, 'delete', '/:pid/official', middlewares, controllers.write.posts.unsetOfficial);
+	setupApiRoute(router, 'post', '/:pid/official/toggle', middlewares, controllers.write.posts.toggleOfficial);
+
+
 	// Shorthand route to access post routes by topic index
 	router.all('/+byIndex/:index*?', [middleware.checkRequired.bind(null, ['tid'])], controllers.write.posts.redirectByIndex);
 
 	return router;
 };
+
+
+

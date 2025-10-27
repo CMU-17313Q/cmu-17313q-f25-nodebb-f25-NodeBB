@@ -67,11 +67,18 @@ coverage
 *.log
 test/files/normalise.jpg.png
 test/files/normalise-resized.jpg
-package-lock.json
-/package.json
+#/package.json
 *.mongodb
 link-plugins.sh
 test.sh
 
 .docker/**
 !**/.gitkeep
+
+#/test/
+# build outputs
+build/
+dump*.rdb
+
+.nyc_tmp/
+.nyc_cov/

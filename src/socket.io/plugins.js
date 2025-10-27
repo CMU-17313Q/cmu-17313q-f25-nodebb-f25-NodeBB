@@ -1,17 +1,42 @@
 'use strict';
 
-const SocketPlugins = {};
+console.log('🚀 [NodeBB] Custom Reactions socket handler file is being loaded.');
 
-/*
-	This file is provided exclusively so that plugins can require it and add their own socket listeners.
+const Reactions = require('../plugins/reactions');
+const Plugins = {};
 
-	How? From your plugin:
+Plugins.reactions = {};
 
-		const SocketPlugins = require.main.require('./src/socket.io/plugins');
-		SocketPlugins.myPlugin = {};
-		SocketPlugins.myPlugin.myMethod = function(socket, data, callback) { ... };
+// ✅ Modern NodeBB v3+ socket handler (no callbacks)
+Plugins.reactions.toggle = async function (socket, data) {
+	console.log('🧩 [Reactions] toggle handler registered');
 
-	Be a good lad and namespace your methods.
-*/
+	try {
+		const { pid, emoji } = data || {};
+		const { uid } = socket;
 
-module.exports = SocketPlugins;
+		console.log('🧠 [Reactions] toggle called -> pid:', pid, 'emoji:', emoji, 'uid:', uid);
+
+		if (!uid) {
+			throw new Error('Not logged in');
+		}
+
+		if (!pid || !emoji) {
+			throw new Error('Missing pid or emoji');
+		}
+
+		// Run your backend toggle logic
+		const counts = await Reactions.toggleReaction(pid, emoji, uid);
+
+		// ✅ Return value (NodeBB 3+ expects this)
+		return { pid, counts };
+	} catch (err) {
+		console.error('[Reactions.toggle] Error:', err);
+		// ✅ Throw error instead of callback
+		throw err;
+	}
+};
+
+console.log('🔍 [TEST] sockets.plugins.reactions.toggle type:', typeof Plugins.reactions?.toggle);
+
+module.exports = Plugins;

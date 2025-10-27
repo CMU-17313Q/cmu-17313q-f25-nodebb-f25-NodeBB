@@ -45,7 +45,7 @@ async function buildSkins() {
 		const plugins = require.main.require('./src/plugins');
 		await plugins.prepareForBuild(['client side styles']);
 		for (const skin of meta.css.supportedSkins) {
-			// eslint-disable-next-line no-await-in-loop
+			 
 			await meta.css.buildBundle(`client-${skin}`, true);
 		}
 		require.main.require('./src/meta/minifier').killAll();
@@ -186,3 +186,11 @@ library.filterMiddlewareRenderHeader = async function (hookData) {
 	hookData.templateData.bootswatchSkinOptions = await meta.css.getSkinSwitcherOptions(hookData.req.uid);
 	return hookData;
 };
+
+// === START OF REACTIONS LOGIC ===
+const sockets = require.main.require('./src/socket.io/plugins');
+const reactions = require('./lib/reactions');
+
+// Register the toggle handler from /lib/reactions.js
+sockets.reactions = {};
+sockets.reactions.toggle = reactions.toggle;

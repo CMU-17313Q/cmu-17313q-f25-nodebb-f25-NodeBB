@@ -1,0 +1,62 @@
+name: CI — Jest Tests Only
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  jest-tests:
+    runs-on: ubuntu-latest
+
+    services:
+      redis:
+        image: redis:7
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Create minimal config for CI
+        run: |
+          cat <<EOF > config.json
+          {
+            "url": "http://localhost:4567",
+            "secret": "ci-secret",
+            "database": "redis",
+            "redis": {
+              "host": "127.0.0.1",
+              "port": 6379,
+              "database": 0
+            }
+          }
+          EOF
+
+      - name: Wait for Redis to be ready
+        run: |
+          for i in {1..20}; do
+            redis-cli ping && break
+            sleep 2
+          done
+
+      - name: Build NodeBB
+        run: ./nodebb build
+
+      - name: Run Jest Tests
+        run: npm test

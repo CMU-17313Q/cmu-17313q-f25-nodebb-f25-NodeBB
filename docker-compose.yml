@@ -1,6 +1,9 @@
 services:
   nodebb:
-    build: .
+    user: "0"
+    build: 
+      context: .
+      dockerfile: dev.Dockerfile   
     # image: ghcr.io/nodebb/nodebb:latest
     restart: unless-stopped
     ports:
@@ -11,18 +14,19 @@ services:
       - nodebb-config:/opt/config
       - ./install/docker/setup.json:/usr/src/app/setup.json
 
-  mongo:
-    image: 'mongo:7-jammy'
-    restart: unless-stopped
-    ports:
-      - '27017:27017'
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: nodebb
-      MONGO_INITDB_ROOT_PASSWORD: nodebb
-      MONGO_INITDB_DATABASE: nodebb
-    volumes:
-      - mongo-data:/data/db
-      - ./install/docker/mongodb-user-init.js:/docker-entrypoint-initdb.d/user-init.js
+ # Not 
+  # mongo:
+  #   image: 'mongo:7-jammy'
+  #   restart: unless-stopped
+  #   ports:
+  #     - '27017:27017'
+  #   environment:
+  #     MONGO_INITDB_ROOT_USERNAME: nodebb
+  #     MONGO_INITDB_ROOT_PASSWORD: nodebb
+  #     MONGO_INITDB_DATABASE: nodebb
+  #   volumes:
+  #     - mongo-data:/data/db
+  #     - ./install/docker/mongodb-user-init.js:/docker-entrypoint-initdb.d/user-init.js
   redis:
     image: redis:8.0.1-alpine
     restart: unless-stopped
@@ -58,7 +62,7 @@ volumes:
     driver_opts:
       o: bind
       type: none
-      device: ./.docker/database/redis
+      device: ${PWD}/.docker/database/redis
 
   postgres-data:
     driver: local
